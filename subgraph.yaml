@@ -1,0 +1,38 @@
+specVersion: 1.0.0
+indexerHints:
+  prune: auto
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: TokenDistribution
+    network: sepolia
+    source:
+      address: "0x3981d326152E2C845f41Aea6DFC35E23234FF607"
+      abi: TokenDistribution
+      startBlock: 5440689
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Initialized
+        - Invested
+        - OwnershipTransferred
+        - TokensClaimed
+        - Upgraded
+      abis:
+        - name: TokenDistribution
+          file: ./abis/TokenDistribution.json
+      eventHandlers:
+        - event: Initialized(uint64)
+          handler: handleInitialized
+        - event: Invested(address,uint32,uint256)
+          handler: handleInvested
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: TokensClaimed(address,uint32,uint256)
+          handler: handleTokensClaimed
+        - event: Upgraded(indexed address)
+          handler: handleUpgraded
+      file: ./src/token-distribution.ts
