@@ -17,3 +17,9 @@ type TokensClaimed @entity(immutable: true) {
   blockTimestamp: BigInt!
   transactionHash: Bytes!
 }
+
+type PeriodSummary @entity {
+  id: Bytes!
+  totalInvested: BigInt! # uint256
+  totalClaimed: BigInt! # uint256
+}

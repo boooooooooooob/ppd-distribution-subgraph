@@ -16,11 +16,8 @@ dataSources:
       apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
-        - Initialized
         - Invested
-        - OwnershipTransferred
         - TokensClaimed
-        - Upgraded
       abis:
         - name: TokenDistribution
           file: ./abis/TokenDistribution.json
