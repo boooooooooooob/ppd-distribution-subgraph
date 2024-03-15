@@ -26,6 +26,7 @@ export function handleInvested(event: InvestedEvent): void {
     periodSummary = new PeriodSummary(
       Bytes.fromI32(event.params.period.toI32())
     )
+    periodSummary.period = event.params.period
     periodSummary.totalInvested = BigInt.fromI32(0)
     periodSummary.totalClaimed = BigInt.fromI32(0)
   }
@@ -57,6 +58,7 @@ export function handleTokensClaimed(event: TokensClaimedEvent): void {
     periodSummary = new PeriodSummary(
       Bytes.fromI32(event.params.period.toI32())
     )
+    periodSummary.period = event.params.period
     periodSummary.totalInvested = BigInt.fromI32(0)
     periodSummary.totalClaimed = BigInt.fromI32(0)
   }

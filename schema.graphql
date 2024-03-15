@@ -20,6 +20,7 @@ type TokensClaimed @entity(immutable: true) {
 
 type PeriodSummary @entity {
   id: Bytes!
+  period: BigInt! # uint32
   totalInvested: BigInt! # uint256
   totalClaimed: BigInt! # uint256
 }
