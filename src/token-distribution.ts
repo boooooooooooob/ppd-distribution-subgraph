@@ -2,7 +2,12 @@ import {
   Invested as InvestedEvent,
   TokensClaimed as TokensClaimedEvent,
 } from '../generated/TokenDistribution/TokenDistribution'
-import { Invested, TokensClaimed, PeriodSummary } from '../generated/schema'
+import {
+  Invested,
+  TokensClaimed,
+  PeriodSummary,
+  UniqueInvestor,
+} from '../generated/schema'
 import { Bytes, BigInt } from '@graphprotocol/graph-ts'
 
 export function handleInvested(event: InvestedEvent): void {
@@ -29,11 +34,27 @@ export function handleInvested(event: InvestedEvent): void {
     periodSummary.period = event.params.period
     periodSummary.totalInvested = BigInt.fromI32(0)
     periodSummary.totalClaimed = BigInt.fromI32(0)
+    periodSummary.totalUniqueInvestors = BigInt.fromI32(0)
   }
 
   periodSummary.totalInvested = periodSummary.totalInvested.plus(
     event.params.amount
   )
+
+  let investorId =
+    event.params.investor.toHexString() + '-' + event.params.period.toString()
+  let uniqueInvestor = UniqueInvestor.load(investorId)
+  if (uniqueInvestor == null) {
+    uniqueInvestor = new UniqueInvestor(investorId)
+    uniqueInvestor.investor = event.params.investor
+    uniqueInvestor.period = event.params.period
+
+    uniqueInvestor.save()
+
+    periodSummary.totalUniqueInvestors =
+      periodSummary.totalUniqueInvestors.plus(BigInt.fromI32(1))
+  }
+
   periodSummary.save()
 }
 
