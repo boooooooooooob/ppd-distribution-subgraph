@@ -31,3 +31,10 @@ type UniqueInvestor @entity(immutable: true) {
   investor: Bytes! # address
   period: BigInt! # uint32
 }
+
+type GlobalSummary @entity {
+  id: String!
+  totalInvested: BigInt! # uint256
+  totalClaimed: BigInt! # uint256
+  totalUniqueInvestors: BigInt! # uint256
+}

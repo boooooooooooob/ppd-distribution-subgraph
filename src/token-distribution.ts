@@ -7,6 +7,7 @@ import {
   TokensClaimed,
   PeriodSummary,
   UniqueInvestor,
+  GlobalSummary,
 } from '../generated/schema'
 import { Bytes, BigInt } from '@graphprotocol/graph-ts'
 
@@ -56,6 +57,34 @@ export function handleInvested(event: InvestedEvent): void {
   }
 
   periodSummary.save()
+
+  let globalSummary = GlobalSummary.load('1')
+  if (globalSummary == null) {
+    globalSummary = new GlobalSummary('1')
+    globalSummary.totalInvested = BigInt.fromI32(0)
+    globalSummary.totalClaimed = BigInt.fromI32(0)
+    globalSummary.totalUniqueInvestors = BigInt.fromI32(0)
+  }
+
+  globalSummary.totalInvested = globalSummary.totalInvested.plus(
+    event.params.amount
+  )
+
+  let globalInvestorId = event.params.investor.toHexString() + '-global'
+
+  let globalUniqueInvestor = UniqueInvestor.load(globalInvestorId)
+  if (globalUniqueInvestor == null) {
+    globalUniqueInvestor = new UniqueInvestor(globalInvestorId)
+    globalUniqueInvestor.investor = event.params.investor
+    globalUniqueInvestor.period = BigInt.fromI32(-1)
+
+    globalUniqueInvestor.save()
+
+    globalSummary.totalUniqueInvestors =
+      globalSummary.totalUniqueInvestors.plus(BigInt.fromI32(1))
+  }
+
+  globalSummary.save()
 }
 
 export function handleTokensClaimed(event: TokensClaimedEvent): void {
@@ -88,4 +117,17 @@ export function handleTokensClaimed(event: TokensClaimedEvent): void {
     event.params.amount
   )
   periodSummary.save()
+
+  let globalSummary = GlobalSummary.load('1')
+  if (globalSummary == null) {
+    globalSummary = new GlobalSummary('1')
+    globalSummary.totalInvested = BigInt.fromI32(0)
+    globalSummary.totalClaimed = BigInt.fromI32(0)
+    globalSummary.totalUniqueInvestors = BigInt.fromI32(0)
+  }
+
+  globalSummary.totalClaimed = globalSummary.totalClaimed.plus(
+    event.params.amount
+  )
+  globalSummary.save()
 }
